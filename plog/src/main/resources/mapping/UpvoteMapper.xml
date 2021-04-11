@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="www.wzb.dao.UpvoteMapper">
+    <select id="findByUidAndConId" parameterType="www.wzb.entity.Upvote" resultType="www.wzb.entity.Upvote">
+        SELECT * FROM upvote WHERE uid = #{uId} AND contentId = #{contentId}
+    </select>
+
+    <insert id="add" parameterType="www.wzb.entity.Upvote">
+         INSERT INTO upvote(id,uid,contentId,ip,upvote,downvote,upvoteTime)
+        VALUES(#{id},#{uId},#{contentId},#{ip},#{upvote},#{downvote},#{upvoteTime})
+    </insert>
+
+    <select id="getByUid" parameterType="www.wzb.entity.Upvote" resultType="www.wzb.entity.Upvote">
+        SELECT * FROM upvote WHERE uid = #{uId}
+    </select>
+
+    <update id="update" parameterType="www.wzb.entity.Upvote">
+        UPDATE upvote
+        SET
+        <if test="uId != null and uId !=''">
+            uid = #{uId},
+        </if>
+
+        <if test="contentId != null and contentId !=''">
+            contentId = #{contentId},
+        </if>
+        <if test="ip != null and ip  !=''">
+            ip = #{ip},
+        </if>
+        <if test="upvote != null and upvote !=''">
+            upvote = #{upvote},
+        </if>
+        <if test="downvote != null and downvote !=''">
+            downvote = #{downvote},
+        </if>
+        <if test="upvoteTime != null and upvoteTime !=''">
+            upvoteTime = #{upvoteTime},
+        </if>
+        id = #{id}
+        WHERE
+        id = #{id}
+    </update>
+
+    <delete id="deleteByContentId" parameterType="Long">
+        DELETE FROM upvote WHERE contentId = #{contentId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="www.wzb.dao.CommentMapper">
+
+    <select id="select" parameterType="www.wzb.entity.Comment" resultType="www.wzb.entity.Comment">
+        SELECT * FROM comment WHERE id = #{id} AND contentid = #{uId} AND comId = #{comId} AND byid = #{byId}
+        AND commTime = #{commTime} AND comContent = #{comContent} AND children = #{children} AND upvote = #{upvote}
+    </select>
+
+    <update id="update" parameterType="www.wzb.entity.Comment">
+        UPDATE comment
+        SET
+        <if test="conId != null and conId !=''">
+            contentId = #{conId},
+        </if>
+        <if test="comId != null and comId !=''">
+            comId = #{comId},
+        </if>
+        <if test="byId != null and byId !=''">
+            byid = #{byId},
+        </if>
+        <if test="commTime != null and commTime !=''">
+            commTime = #{commTime},
+        </if>
+        <if test="comContent != null and comContent !=''">
+            comContent = #{comContent},
+        </if>
+        <if test="children != null and children !=''">
+            children = #{children},
+        </if>
+        <if test="upvote != null and upvote !=''">
+            upvote = #{upvote},
+        </if>
+        id = #{id}
+        WHERE
+        id = #{id}
+    </update>
+
+    <select id="findById" parameterType="Long" resultType="www.wzb.entity.Comment">
+        SELECT * FROM comment WHERE id = #{id}
+    </select>
+
+    <select id="selectAll"  resultMap="commentMap">
+        select c.id,c.children,c.contentid,c.comId,c.byid,c.upvote,c.commTime,c.comContent,u.id as uid,u.email,u.password,u.nickName,u.phone,u.state,u.imgUrl,u.enable
+        from comment c,user u WHERE contentid = #{cid} and c.comId = u.id order by id desc
+    </select>
+
+    <resultMap type="www.wzb.entity.Comment" id="commentMap">
+        <id property="id" column="id" />
+        <result property="children" column="children" />
+        <result property="conId" column="con_id" />
+        <result property="comId" column="com_id" />
+        <result property="byId" column="by_id" />
+        <result property="upvote" column="upvote" />
+        <result property="commTime" column="comm_time" />
+        <result property="comContent" column="com_content" />
+        <!-- property 表示www.wzb.entity.Comment中的属性； column 表示表中的列名 -->
+        <association property="user" javaType="User">
+            <id column="uid" property="id" />
+            <result column="email" property="email" />
+            <result column="password" property="password" />
+            <result column="nick_name" property="nickName" />
+            <result column="phone" property="phone" />
+            <result column="state" property="state" />
+            <result column="img_url" property="imgUrl" />
+            <result column="enable" property="enable" />
+        </association>
+    </resultMap>
+
+    <insert id="insertComment" parameterType="comment" useGeneratedKeys="true" keyProperty="id">
+        insert into comment(id, contentid, comId, byid, comContent, upvote, commTime,children) values(#{id}, #{conId},#{comId}, #{byId},#{comContent},#{upvote}, #{commTime},#{children})
+    </insert>
+
+    <select id="findAllFirstComment"  resultMap="firstCommentMap">
+        select c.id,c.children,c.contentid,c.comId,c.byid,c.upvote,c.commTime,c.comContent,u.id as uid,u.email,u.password,u.nickName,u.phone,u.state,u.imgUrl,u.enable
+        from comment c,user u WHERE contentid = #{cid} and byid is null and c.comId = u.id order by id desc
+    </select>
+
+    <resultMap type="www.wzb.entity.Comment" id="firstCommentMap">
+        <id property="id" column="id" />
+        <result property="children" column="children" />
+        <result property="conId" column="contentid" />
+        <result property="comId" column="comId" />
+        <result property="byId" column="byid" />
+        <result property="upvote" column="upvote" />
+        <result property="commTime" column="commTime" />
+        <result property="comContent" column="comContent" />
+        <!-- property 表示www.wzb.entity.Comment中的属性； column 表示表中的列名 -->
+        <association property="user" javaType="User">
+            <id column="uid" property="id" />
+            <result column="email" property="email" />
+            <result column="password" property="password" />
+            <result column="nickName" property="nickName" />
+            <result column="phone" property="phone" />
+            <result column="state" property="state" />
+            <result column="imgUrl" property="imgUrl" />
+            <result column="enable" property="enable" />
+        </association>
+    </resultMap>
+
+    <!--查询所有子评论-->
+    <select id="findAllChildrenComment"  resultMap="childCommentMap">
+        select c.id,c.children,c.contentid,c.comId,c.byid,c.upvote,c.commTime,c.comContent,u.id as uid,u.email,u.password,u.nickName,u.phone,u.state,u.imgUrl,u.enable
+        from comment c,user u WHERE contentid = #{cid}
+        <if test='children!=null and children!=""'>
+            AND c.id in (${children})
+        </if>
+
+        and c.comId = u.id order by id desc
+    </select>
+
+    <resultMap type="www.wzb.entity.Comment" id="childCommentMap">
+        <id property="id" column="id" />
+        <result property="children" column="children" />
+        <result property="conId" column="contentid" />
+        <result property="comId" column="comId" />
+        <result property="byId" column="byid" />
+        <result property="upvote" column="upvote" />
+        <result property="commTime" column="commTime" />
+        <result property="comContent" column="comContent" />
+        <!-- property 表示www.wzb.entity.Comment中的属性； column 表示表中的列名 -->
+        <association property="user" javaType="User">
+            <id column="uid" property="id" />
+            <result column="email" property="email" />
+            <result column="password" property="password" />
+            <result column="nickName" property="nickName" />
+            <result column="phone" property="phone" />
+            <result column="state" property="state" />
+            <result column="imgUrl" property="imgUrl" />
+            <result column="enable" property="enable" />
+        </association>
+    </resultMap>
+
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM comment WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByContentId" parameterType="Long">
+        DELETE FROM comment WHERE contentid = #{cid}
+    </delete>
+
+    <delete id="deleteChildrenComment" parameterType="list">
+        DELETE FROM comment WHERE id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="www.wzb.dao.RoleMapper">
+    <select id="findByUid" parameterType="Long" resultMap="roleListMap">
+        select id,roleName,roleValue,enabled from role where id in(select r.rid from user u, role_user r where u.id = r.uid and r.uid = #{uid}) and enabled =1
+    </select>
+
+    <resultMap type="www.wzb.entity.Role" id="roleListMap">
+        <id property="id" column="id" />
+        <result property="roleName" column="roleName" />
+        <result property="roleValue" column="roleValue" />
+        <result property="enabled" column="enabled" />
+    </resultMap>
+    <select id="findById" parameterType="Long" resultType="www.wzb.entity.Role">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+    <insert id="add" parameterType="www.wzb.entity.Role">
+        INSERT INTO role(id,roleName,roleValue,roleMatcher,enabled,remark) VALUES (#{id},#{roleName},#{roleValue}
+        #{roleMatcher},#{enabled},#{remark})
+    </insert>
+</mapper>

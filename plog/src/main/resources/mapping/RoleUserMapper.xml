@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="www.wzb.dao.RoleUserMapper">
+    <delete id="deleteByUid" parameterType="Long">
+        DELETE FROM role_user WHERE uid = #{uId}
+    </delete>
+    <select id="findByUser" parameterType="Long" resultType="www.wzb.entity.RoleUser">
+        SELECT * FROM user WHERE uid = #{uId}
+    </select>
+    <insert id="add" parameterType="www.wzb.entity.RoleUser">
+        INSERT INTO role_user(id,uid,rid) VALUES (#{id},#{uId},#{rId})
+    </insert>
+</mapper>
